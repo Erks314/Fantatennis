@@ -12,6 +12,13 @@
         .title{font-size:2.5em;font-weight:900;background:linear-gradient(135deg,#FFD700 0%,#FFA500 50%,#FF8C00 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;text-shadow:2px 2px 4px rgba(0,0,0,0.3);letter-spacing:1px;text-transform:uppercase;}
         .subtitle{font-size:1em;color:#fff;opacity:0.9;font-weight:300;}
         .table-wrapper{background:rgba(255,255,255,0.95);border-radius:15px;padding:20px;box-shadow:0 15px 40px rgba(0,0,0,0.3);overflow:auto;}
+        #fantatable {
+  page-break-inside: auto;
+}
+#fantatable tr { 
+  page-break-inside: avoid; 
+  page-break-after: auto;
+}
         table{width:100%;border-collapse:collapse;font-size:0.9em;}
         th,td{padding:8px 12px;text-align:center;border-bottom:1px solid #eee;height:50px;vertical-align:middle;}
         th{background:linear-gradient(135deg,#1a472a 0%,#2d6b4a 100%);color:white;font-weight:bold;font-size:0.85em;border-radius:8px 8px 0 0;}
@@ -128,16 +135,36 @@
         window.onclick=e=>{if(e.target.id==='modal')closeModal();};
         document.getElementById('tournamentname').addEventListener('keypress',e=>{if(e.key==='Enter')addTournament();});
         function exportPDF(){
-  const element = document.getElementById('fantatable');
+  const table = document.getElementById('fantatable');
+  const wrapper = document.createElement('div');
+  wrapper.style.cssText = 'width:100%;overflow:visible;page-break-inside:auto;';
+  wrapper.appendChild(table.cloneNode(true));
+  
   const opt = {
-    margin: 10,
+    margin: [10,10,10,10],
     filename: 'FantaTennis_'+new Date().toISOString().split('T')[0]+'.pdf',
-    image: { type: 'jpeg', quality: 0.98 },
-    html2canvas: { scale: 2 },
-    jsPDF: { orientation: 'landscape', unit: 'mm', format: 'a4' }
+    image: { type: 'jpeg', quality: 0.95 },
+    html2canvas: { 
+      scale: 1.5,
+      useCORS: true,
+      letterRendering: true,
+      height: wrapper.scrollHeight
+    },
+    jsPDF: { 
+      orientation: 'landscape',
+      unit: 'mm', 
+      format: 'a4'
+    },
+    pagebreak: { 
+      mode: ['avoid-all', 'css', 'legacy'],
+      before: '.break-before',
+      after: '.break-after',
+      avoid: 'tr, th, td'
+    }
   };
-  html2pdf().set(opt).from(element).save();
-  showStatus('PDF Scaricato!');
+  
+  html2pdf().set(opt).from(wrapper).save();
+  showStatus('PDF Multi-Pagina OK!');
 }
     </script>
 </body>
