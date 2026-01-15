@@ -48,6 +48,7 @@
         .status{display:none;background:#27ae60;color:white;padding:10px;border-radius:8px;margin-top:15px;text-align:center;}
         @media(max-width:768px){.title{font-size:1.8em;}.table-wrapper{padding:15px;font-size:0.8em;}th,td{padding:6px 8px;height:45px;}}
     </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
 <body>
     <div class="container">
@@ -65,6 +66,7 @@
             <button class="btn btn-primary" onclick="openModal()">+ Aggiungi Torneo</button>
             <button class="btn btn-success" onclick="saveData()">💾 Salva</button>
             <button class="btn btn-danger" onclick="resetData()">🔄 Reset</button>
+            <button class="btn" style="background:#3498db;color:white;" onclick="exportPDF()">📥 Esporta PDF</button>
         </div>
         <div id="status" class="status"></div>
     </div>
@@ -125,6 +127,18 @@
         document.addEventListener('DOMContentLoaded',init);
         window.onclick=e=>{if(e.target.id==='modal')closeModal();};
         document.getElementById('tournamentname').addEventListener('keypress',e=>{if(e.key==='Enter')addTournament();});
+        function exportPDF(){
+  const element = document.getElementById('fantatable');
+  const opt = {
+    margin: 10,
+    filename: 'FantaTennis_'+new Date().toISOString().split('T')[0]+'.pdf',
+    image: { type: 'jpeg', quality: 0.98 },
+    html2canvas: { scale: 2 },
+    jsPDF: { orientation: 'landscape', unit: 'mm', format: 'a4' }
+  };
+  html2pdf().set(opt).from(element).save();
+  showStatus('PDF Scaricato!');
+}
     </script>
 </body>
 </html>
