@@ -90,6 +90,31 @@
     </div>
 
     <script>
+
+
+
+
+  
+  // 1️⃣ INIZIALIZZAZIONE FIREBASE + FIRESTORE
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
+  import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "…",
+    authDomain: "…",
+    projectId: "…",
+    storageBucket: "…",
+    messagingSenderId: "…",
+    appId: "…"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  window.db = getFirestore(app);
+
+  // 2️⃣ QUI PUOI INSERIRE TUTTE LE TUE FUNZIONI ESISTENTI
+  // renderTable(), saveData(), loadData() ecc.
+
+     
         const players=[
   {name:'Gennaro',photo:'Gennaro.jpg'},
   {name:'Mirko',photo:'Mirko.jpg'},
@@ -103,7 +128,9 @@
   {name:'Donatello',photo:'Donatello.jpg'}
 ];
         let tournaments=[];
-        function init(){loadData();renderTable();}
+        function init() {
+  loadData(); // carica dati in realtime
+}
         function renderTable(){renderHead();renderBody();}
         function renderHead(){const head=document.getElementById('tablehead');head.innerHTML='<tr><th>TORNEO</th>'+players.map(p=>`<th>${getAvatar(p)}<div class="player-name">${p.name}</div></th>`).join('')+'</tr>';}
         function getAvatar(p){
@@ -149,8 +176,24 @@
         function addTournament(){const name=document.getElementById('tournamentname').value.trim();if(!name)return;tournaments.push({name:name,scores:{}});saveData();renderTable();closeModal();document.getElementById('tournamentname').value='';}
         function deleteTournament(idx){if(confirm('Eliminare?')){tournaments.splice(idx,1);saveData();renderTable();}}
         function saveData(){localStorage.setItem('fantatennis',JSON.stringify(tournaments));showStatus('Salvato!');}
-        function resetData(){if(confirm('Reset tutto?')){tournaments=[];localStorage.removeItem('fantatennis');renderTable();showStatus('Resettato');}}
-        function loadData(){const saved=localStorage.getItem('fantatennis');if(saved)tournaments=JSON.parse(saved);}
+        function resetData() {
+  if(confirm('Reset tutto?')) {
+    tournaments = [];
+    const ref = doc(db, "fantatennis", "shared");
+    setDoc(ref, { tournaments }); // reset nel cloud
+    renderTable();
+    showStatus('Resettato!');
+  }
+}
+        function loadData() {
+  const ref = doc(db, "fantatennis", "shared"); // documento condiviso
+  onSnapshot(ref, (snap) => {
+    if (snap.exists()) {
+      tournaments = snap.data().tournaments || [];
+      renderTable();
+    }
+  });
+        }
         function showStatus(msg){const status=document.getElementById('status');status.textContent=msg;status.style.display='block';setTimeout(()=>status.style.display='none',2000);}
         document.addEventListener('DOMContentLoaded',init);
         window.onclick=e=>{if(e.target.id==='modal')closeModal();};
