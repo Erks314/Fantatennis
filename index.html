@@ -122,9 +122,27 @@
   }, 0);
   return total.toFixed(1);
 }
-        function exportCSV(){let csv='TORNEO,'+players.map(p=>p.name).join(',')+'
-';tournaments.forEach(t=>{csv+=t.name+','+players.map((p,j)=>t.scores[j]||'').join(',')+'
-'});csv+='TOTALE,'+players.map((p,j)=>getTotal(j)).join(',');const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);a.download='FantaTennis.csv';a.click();showStatus('CSV OK!');}
+        function exportCSV() {
+    let csv = 'TORNEO,' + players.map(p => p.name).join(",") + '\n';
+
+    for (let i = 0; i < tournaments.length; i++) {
+        let t = tournaments[i];
+        csv += t.name + ",";
+        csv += players.map((p, j) => t.scores[j] || "").join(",");
+        csv += '\n';
+    }
+
+    csv += 'TOTALE,' + players.map((p, j) => getTotal(j)).join(",");
+
+    var a = document.createElement("a");
+    a.setAttribute("href", "data:text/csv;charset=utf-8," + encodeURIComponent(csv));
+    a.setAttribute("download", "FantaTennis.csv");
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+
+    showStatus('CSV OK!');
+}
         function updateScore(tIdx,pIdx,value){tournaments[tIdx].scores[pIdx]=value;renderTable();}
         function openModal(){document.getElementById('modal').style.display='block';document.getElementById('tournamentname').focus();}
         function closeModal(){document.getElementById('modal').style.display='none';}
