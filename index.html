@@ -17,6 +17,10 @@
         th{background:linear-gradient(135deg,#1a472a 0%,#2d6b4a 100%);color:white;font-weight:bold;font-size:0.85em;border-radius:8px 8px 0 0;}
         .player-avatar{width:45px;height:45px;margin:0 auto 5px;background:linear-gradient(135deg,#FFD700,#FFA500);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.2em;font-weight:bold;color:white;box-shadow:0 3px 10px rgba(255,215,0,0.3);border:2px solid white;}
         .player-name{font-size:0.75em;color:white;font-weight:600;}
+        .player-avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%;border:2px solid white;}
+        .player-avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%;border:2px solid white;}
+        .player-avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%;border:2px solid white;}
+
         input{width:100%;padding:6px;border:1px solid #ddd;border-radius:5px;font-size:1em;font-weight:500;text-align:center;color:#1a472a;transition:all 0.2s;}
         input:focus{outline:none;border-color:#FFD700;background:#fffef0;box-shadow:0 0 0 2px rgba(255,215,0,0.2);}
         .total-row {
@@ -77,11 +81,28 @@
     </div>
 
     <script>
-        const players=['Gennaro','Mirko','Federico','Ciro','Damiano','Carlo','Francesco','Friarello','Giuseppe','Donatello'];
+        const players=[
+  {name:'Gennaro',photo:'Gennaro.jpg'},
+  {name:'Mirko',photo:'Mirko.jpg'},
+  {name:'Federico',photo:'Federico.jpg'},
+  {name:'Ciro',photo:'Ciro.jpg'},
+  {name:'Damiano',photo:'Damiano.jpg'},
+  {name:'Carlo',photo:'Carlo.jpg'},
+  {name:'Francesco',photo:'Francesco.jpg'},
+  {name:'Friarello',photo:'Friarello.jpg'},
+  {name:'Giuseppe',photo:'Giuseppe.jpg'},
+  {name:'Donatello',photo:'Donatello.jpg'}
+];
         let tournaments=[];
         function init(){loadData();renderTable();}
         function renderTable(){renderHead();renderBody();}
-        function renderHead(){const head=document.getElementById('tablehead');head.innerHTML='<tr><th>TORNEO</th>'+players.map(p=>`<th><div class="player-avatar">${p.charAt(0)}</div><div class="player-name">${p}</div></th>`).join('')+'</tr>';}
+        function renderHead(){const head=document.getElementById('tablehead');head.innerHTML='<tr><th>TORNEO</th>'+players.map(p=>`<th>${getAvatar(p)}<div class="player-name">${p.name}</div></th>`).join('')+'</tr>';}
+        function getAvatar(p){
+  return `<div class="player-avatar">
+    <img src="${p.photo}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;border:2px solid white;display:block;" 
+    onerror="this.style.display='none';this.parentNode.innerHTML='${p.name.charAt(0)}';">
+  </div>`;
+}
         function renderBody(){const body=document.getElementById('tablebody');body.innerHTML='';
             tournaments.forEach((t,i)=>{const row=document.createElement('tr');row.innerHTML='<td>'+t.name+'<button onclick="deleteTournament('+i+')" style="margin-left:10px;background:#e74c3c;color:white;border:none;padding:2px 8px;border-radius:4px;font-size:0.7em;">X</button></td>'+players.map((p,j)=>`<td><input type="number" value="${t.scores[j]||''}" onchange="updateScore(${i},${j},this.value)" placeholder="—"></td>`).join('');body.appendChild(row);});
             const totalRow=document.createElement('tr');totalRow.className='total-row';totalRow.innerHTML='<th>TOTALE</th>'+players.map((p,j)=>`<td>${getTotal(j)}</td>`).join('');body.appendChild(totalRow);}
