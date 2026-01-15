@@ -175,7 +175,11 @@
         function closeModal(){document.getElementById('modal').style.display='none';}
         function addTournament(){const name=document.getElementById('tournamentname').value.trim();if(!name)return;tournaments.push({name:name,scores:{}});saveData();renderTable();closeModal();document.getElementById('tournamentname').value='';}
         function deleteTournament(idx){if(confirm('Eliminare?')){tournaments.splice(idx,1);saveData();renderTable();}}
-        function saveData(){localStorage.setItem('fantatennis',JSON.stringify(tournaments));showStatus('Salvato!');}
+        function saveData() {
+  const ref = doc(db, "fantatennis", "shared");
+  setDoc(ref, { tournaments }); // salva tutto sul cloud
+  showStatus("💾 Salvato (cloud)!");
+}
         function resetData() {
   if(confirm('Reset tutto?')) {
     tournaments = [];
