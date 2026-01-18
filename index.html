@@ -37,9 +37,6 @@ input:focus{outline:none;border-color:#FFD700;background:#fffef0;box-shadow:0 0 
 .bold-num{font-weight:bold;}
 .bold-max{font-weight:bold;color:red;}
 @media(max-width:768px){.title{font-size:1.8em;}.table-wrapper{padding:15px;font-size:0.8em;}th,td{padding:6px 8px;height:45px;}}
-
-/* Tabella montepremi */
-.prize-table td, .prize-table th { color:white; font-weight:bold; }
 </style>
 </head>
 <body>
@@ -134,7 +131,6 @@ const db = firebase.firestore();
 window.db = db;
 </script>
 
-<!-- SCRIPT PRINCIPALE -->
 <script>
 const players=[
   {name:'Gennaro',photo:'Gennaro.jpg'},
@@ -151,28 +147,10 @@ const players=[
 let tournaments=[];
 
 // INIZIALIZZAZIONE
-function init(){ loadData(); highlightPrizeTable(); renderTable(); }
-
-// ----------- FUNZIONI MONTEPREMI -----------
-function highlightPrizeTable() {
-  const rows = document.querySelectorAll('.prize-table tbody tr');
-  rows.forEach(row => {
-    let max = 0;
-    const tds = Array.from(row.querySelectorAll('td')).slice(1);
-    tds.forEach(td=>{
-      td.style.fontWeight='bold';
-      const num=parseFloat(td.textContent.replace(/[^\d.,]/g,'').replace(',','.'))||0;
-      if(num>max) max=num;
-    });
-    tds.forEach(td=>{
-      const num=parseFloat(td.textContent.replace(/[^\d.,]/g,'').replace(',','.'))||0;
-      if(num===max) td.style.color='red';
-    });
-  });
-}
+function init(){ loadData(); renderTable(); }
 
 // ----------- TABELLA CENTRALE -----------
-function renderTable(){ renderHead(); renderBody(); }
+function renderTable(){ renderHead(); renderBody(); updateMaxHighlight(); }
 
 function renderHead(){
   const head=document.getElementById('tablehead');
@@ -215,6 +193,26 @@ function getTotal(idx){
 }
 
 function updateScore(tIdx,pIdx,value){ tournaments[tIdx].scores[pIdx]=value; renderTable(); }
+
+// ----------- MAX HIGHLIGHT DINAMICO -----------
+function updateMaxHighlight(){
+  if(tournaments.length===0) return;
+  for(let j=0;j<players.length;j++){
+    let max = -Infinity;
+    tournaments.forEach(t=>{ const s=parseFloat(t.scores[j]); if(!isNaN(s) && s>max) max=s; });
+    // rimuovi vecchi stili
+    document.querySelectorAll('#fantatable tbody tr').forEach((row,i)=>{
+      if(i<tournaments.length){
+        const input=row.querySelectorAll('td input')[j];
+        if(input){
+          input.style.color='';
+          const val=parseFloat(input.value);
+          if(!isNaN(val) && val===max) input.style.color='red';
+        }
+      }
+    });
+  }
+}
 
 // ----------- MODAL TORNEO -----------
 function openModal(){ document.getElementById('modal').style.display='block'; document.getElementById('tournamentname').focus(); }
