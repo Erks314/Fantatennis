@@ -9,71 +9,94 @@
 *{margin:0;padding:0;box-sizing:border-box}
 body{
   font-family:'Segoe UI',sans-serif;
-  background:linear-gradient(135deg,#1a472a,#0f2818);
+  background:linear-gradient(135deg,#1a472a 0%,#0f2818 50%,#1a472a 100%);
   min-height:100vh;
   padding:20px;
 }
-.container{max-width:1400px;margin:auto}
+.container{max-width:1400px;margin:0 auto}
+.header{text-align:center;margin-bottom:25px}
 .title{
-  text-align:center;
   font-size:2.5em;
   font-weight:900;
-  color:#FFD700;
-  margin-bottom:25px;
+  background:linear-gradient(135deg,#FFD700,#FFA500);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  text-transform:uppercase;
 }
 
-/* GENERALI */
-table{width:100%;border-collapse:collapse}
-th,td{text-align:center;padding:6px}
-th{
-  background:#1a472a;
-  color:white;
-  font-size:0.85em;
-}
-input{
-  width:100%;
-  padding:6px;
-  text-align:center;
-  font-weight:bold;
-}
-
-/* TORNEI */
 .table-wrapper{
-  background:white;
-  padding:15px;
+  background:rgba(255,255,255,.95);
   border-radius:15px;
+  padding:20px;
   margin-bottom:20px;
 }
-.total-row{
-  background:#1a472a;
+
+table{width:100%;border-collapse:collapse;font-size:.9em}
+th,td{padding:6px 10px;text-align:center;border-bottom:1px solid #eee}
+th{
+  background:linear-gradient(135deg,#1a472a,#2d6b4a);
   color:white;
   font-weight:bold;
 }
 
-/* AVATAR */
 .player-avatar{
   width:45px;height:45px;
   border-radius:50%;
-  overflow:hidden;
   margin:auto;
+  overflow:hidden;
+  border:2px solid white;
 }
 .player-avatar img{width:100%;height:100%;object-fit:cover}
-.player-name{font-size:0.75em;color:white}
+.player-name{font-size:.75em;color:white;font-weight:600}
+
+input{
+  width:100%;
+  padding:6px;
+  border-radius:5px;
+  border:1px solid #ccc;
+  text-align:center;
+  font-weight:bold;
+}
+
+.total-row{
+  background:linear-gradient(135deg,#1a472a,#2d6b4a);
+  color:white;
+  font-weight:bold;
+}
+
+.controls{
+  display:flex;
+  gap:12px;
+  justify-content:center;
+  flex-wrap:wrap;
+  margin-top:20px;
+}
+
+.btn{
+  padding:10px 20px;
+  border:none;
+  border-radius:8px;
+  cursor:pointer;
+  font-weight:600;
+}
+.btn-primary{background:#f39c12;color:white}
+.btn-success{background:#27ae60;color:white}
+.btn-danger{background:#e74c3c;color:white}
+
+/* MONTEPREMI */
+.prize-table th,.prize-table td{color:white;font-weight:bold}
 
 /* STATISTICHE */
 .stats-wrapper{
-  background:#1a472a;
+  background:linear-gradient(135deg,#1a472a,#2d6b4a);
   border-radius:15px;
   padding:10px;
   margin-bottom:20px;
 }
-.stats-wrapper th,
-.stats-wrapper td{
+.stats-wrapper th,.stats-wrapper td{
   color:white;
-  font-size:0.8em;
-  font-weight:bold;
-  padding:4px;
-  border-bottom:1px solid rgba(255,255,255,0.3);
+  padding:4px 6px;
+  font-size:.85em;
 }
 .stats-player{
   cursor:pointer;
@@ -81,50 +104,51 @@ input{
 }
 .stats-player:hover{color:#FFD700}
 
-/* BOTTONI */
-.controls{text-align:center;margin-top:20px}
-button{
-  padding:10px 18px;
-  border:none;
-  border-radius:8px;
-  font-weight:600;
-  cursor:pointer;
-  margin:5px;
-}
-.primary{background:#FFD700}
-.success{background:#27ae60;color:white}
-.danger{background:#e74c3c;color:white}
-
 /* MODAL */
 .modal{
   display:none;
   position:fixed;
   inset:0;
-  background:rgba(0,0,0,.5);
+  background:rgba(0,0,0,.6);
 }
 .modal-content{
   background:white;
-  width:90%;
-  max-width:400px;
   margin:15% auto;
   padding:20px;
+  max-width:400px;
   border-radius:12px;
 }
 .modal-header{
   font-size:1.3em;
   font-weight:bold;
-  margin-bottom:15px;
+  margin-bottom:10px;
+  color:#1a472a;
 }
 </style>
 </head>
 
 <body>
 <div class="container">
-  <div class="title">⚡ FantaTennis 2026</div>
+  <div class="header">
+    <h1 class="title">⚡ FantaTennis 2026</h1>
+  </div>
+
+  <!-- MONTEPREMI -->
+  <table class="prize-table table-wrapper">
+    <thead>
+      <tr><th>TORNEO</th><th>🥇</th><th>🥈</th><th>🥉</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>ATP 500</td><td>6 €</td><td>4 €</td><td>2 €</td></tr>
+      <tr><td>ATP 1000</td><td>10 €</td><td>5 €</td><td>3 €</td></tr>
+      <tr><td>SLAM</td><td>14 €</td><td>8 €</td><td>5 €</td></tr>
+      <tr><td>FINALS</td><td>20 €</td><td>10 €</td><td>8 €</td></tr>
+    </tbody>
+  </table>
 
   <!-- TORNEI -->
   <div class="table-wrapper">
-    <table>
+    <table id="fantatable">
       <thead id="tablehead"></thead>
       <tbody id="tablebody"></tbody>
     </table>
@@ -134,12 +158,7 @@ button{
   <div class="stats-wrapper">
     <table>
       <thead>
-        <tr>
-          <th>Giocatore</th>
-          <th>🥇</th>
-          <th>🥈</th>
-          <th>🥉</th>
-        </tr>
+        <tr><th>Giocatore</th><th>🥇</th><th>🥈</th><th>🥉</th></tr>
       </thead>
       <tbody id="statsbody"></tbody>
     </table>
@@ -147,9 +166,9 @@ button{
 
   <!-- CONTROLLI -->
   <div class="controls">
-    <button class="primary" onclick="openModal()">+ Torneo</button>
-    <button class="success" onclick="saveData()">💾 Salva</button>
-    <button class="danger" onclick="resetData()">🔄 Reset</button>
+    <button class="btn btn-primary" onclick="openModal()">+ Torneo</button>
+    <button class="btn btn-success" onclick="saveData()">💾 Salva</button>
+    <button class="btn btn-danger" onclick="resetData()">🔄 Reset</button>
   </div>
 </div>
 
@@ -159,8 +178,8 @@ button{
     <div class="modal-header">Nuovo torneo</div>
     <input id="tournamentname" placeholder="Nome torneo" style="width:100%;padding:8px">
     <br><br>
-    <button class="primary" onclick="addTournament()">Aggiungi</button>
-    <button onclick="closeModal()">Annulla</button>
+    <button class="btn btn-primary" onclick="addTournament()">Aggiungi</button>
+    <button class="btn" onclick="closeModal()">Chiudi</button>
   </div>
 </div>
 
@@ -168,9 +187,8 @@ button{
 <div id="palmaresModal" class="modal">
   <div class="modal-content">
     <div class="modal-header" id="palmaresTitle"></div>
-    <div id="palmaresBody"></div>
-    <br>
-    <button onclick="closePalmares()">Chiudi</button>
+    <div id="palmaresBody"></div><br>
+    <button class="btn" onclick="closePalmares()">Chiudi</button>
   </div>
 </div>
 
@@ -180,63 +198,50 @@ button{
 
 <script>
 firebase.initializeApp({
-  apiKey: "AIzaSyBqkJaCnZ6Hzm7ytyoj3_dKeZ0kuNbJXbI",
-  authDomain: "fantatennis-ecd35.firebaseapp.com",
-  projectId: "fantatennis-ecd35"
+  apiKey:"AIzaSyBqkJaCnZ6Hzm7ytyoj3_dKeZ0kuNbJXbI",
+  authDomain:"fantatennis-ecd35.firebaseapp.com",
+  projectId:"fantatennis-ecd35"
 });
 const db=firebase.firestore();
-</script>
 
-<script>
 const players=[
-  {name:'Gennaro',photo:'Gennaro.jpg'},
-  {name:'Mirko',photo:'Mirko.jpg'},
-  {name:'Federico',photo:'Federico.jpg'},
-  {name:'Ciro',photo:'Ciro.jpg'},
-  {name:'Damiano',photo:'Damiano.jpg'},
-  {name:'Carlo',photo:'Carlo.jpg'},
-  {name:'Francesco',photo:'Francesco.jpg'},
-  {name:'Friarello',photo:'Friarello.jpg'},
-  {name:'Giuseppe',photo:'Giuseppe.jpg'},
-  {name:'Donatello',photo:'Donatello.jpg'}
+ 'Gennaro','Mirko','Federico','Ciro','Damiano',
+ 'Carlo','Francesco','Friarello','Giuseppe','Donatello'
 ];
 
 let tournaments=[];
 
-/* RENDER */
 function render(){
-  renderHead();
-  renderBody();
-  renderStats();
+  renderHead();renderBody();renderStats();
 }
 
 function renderHead(){
   tablehead.innerHTML='<tr><th>TORNEO</th>'+
-  players.map(p=>`
-    <th>
-      <div class="player-avatar"><img src="${p.photo}"></div>
-      <div class="player-name">${p.name}</div>
-    </th>`).join('')+'</tr>';
+    players.map(p=>`<th>${p}</th>`).join('')+'</tr>';
 }
 
 function renderBody(){
   tablebody.innerHTML='';
   tournaments.forEach((t,i)=>{
-    const tr=document.createElement('tr');
-    tr.innerHTML=`<td>${t.name}</td>`+
-    players.map((p,j)=>`
-      <td>
-        <input type="number" value="${t.scores[j]||''}"
-        onchange="updateScore(${i},${j},this.value)">
-      </td>`).join('');
-    tablebody.appendChild(tr);
+    const row=document.createElement('tr');
+    row.innerHTML='<td>'+t.name+'</td>'+
+      players.map((_,j)=>
+        `<td><input value="${t.scores[j]||''}"
+         onchange="updateScore(${i},${j},this.value)"></td>`).join('');
+    tablebody.appendChild(row);
+
+    const vals=players.map((_,j)=>+t.scores[j]||0);
+    const max=Math.max(...vals);
+    row.querySelectorAll('input').forEach((inp,k)=>{
+      inp.style.color=vals[k]===max && max>0?'red':'black';
+    });
   });
 
-  const total=document.createElement('tr');
-  total.className='total-row';
-  total.innerHTML='<td>TOTALE</td>'+
-  players.map((p,j)=>`<td>${getTotal(j)}</td>`).join('');
-  tablebody.appendChild(total);
+  const tot=document.createElement('tr');
+  tot.className='total-row';
+  tot.innerHTML='<td>TOTALE</td>'+
+    players.map((_,j)=>`<td>${getTotal(j)}</td>`).join('');
+  tablebody.appendChild(tot);
 }
 
 function renderStats(){
@@ -244,27 +249,59 @@ function renderStats(){
   players.forEach((p,i)=>{
     let w=0,s=0,t=0;
     tournaments.forEach(tr=>{
-      const scores=players.map((_,j)=>+tr.scores[j]||0);
-      const ord=[...scores].sort((a,b)=>b-a);
-      if(scores[i]===ord[0]&&ord[0])w++;
-      else if(scores[i]===ord[1]&&ord[1])s++;
-      else if(scores[i]===ord[2]&&ord[2])t++;
+      const arr=players.map((_,j)=>+tr.scores[j]||0).sort((a,b)=>b-a);
+      const v=+tr.scores[i]||0;
+      if(v===arr[0]&&v>0)w++;
+      else if(v===arr[1]&&v>0)s++;
+      else if(v===arr[2]&&v>0)t++;
     });
-    statsbody.innerHTML+=`
-      <tr>
-        <td class="stats-player" onclick="openPalmares(${i})">${p.name}</td>
+    statsbody.innerHTML+=
+      `<tr>
+        <td class="stats-player" onclick="openPalmares(${i})">${p}</td>
         <td>${w}</td><td>${s}</td><td>${t}</td>
       </tr>`;
   });
 }
 
-/* PALMARES */
 function openPalmares(i){
-  const p=players[i];
   let w=[],s=[],t=[];
   tournaments.forEach(tr=>{
-    const scores=players.map((_,j)=>+tr.scores[j]||0);
-    const ord=[...scores].sort((a,b)=>b-a);
-    if(scores[i]===ord[0]&&ord[0])w.push(tr.name);
-    else if(scores[i]===ord[1]&&ord[1])s.push(tr.name);
-    else if(scores[i]I will 
+    const vals=players.map((_,j)=>+tr.scores[j]||0);
+    const ord=[...vals].sort((a,b)=>b-a);
+    if(vals[i]===ord[0]&&ord[0]>0)w.push(tr.name);
+    else if(vals[i]===ord[1]&&ord[1]>0)s.push(tr.name);
+    else if(vals[i]===ord[2]&&ord[2]>0)t.push(tr.name);
+  });
+  palmaresTitle.textContent='🏆 '+players[i];
+  palmaresBody.innerHTML=
+    `🥇 ${w.join(', ')||'—'}<br>
+     🥈 ${s.join(', ')||'—'}<br>
+     🥉 ${t.join(', ')||'—'}`;
+  palmaresModal.style.display='block';
+}
+function closePalmares(){palmaresModal.style.display='none'}
+
+function addTournament(){
+  const n=tournamentname.value.trim();
+  if(!n)return;
+  tournaments.push({name:n,scores:{}});
+  saveData();closeModal();
+}
+function updateScore(t,p,v){tournaments[t].scores[p]=v;render()}
+function getTotal(j){
+  return tournaments.reduce((s,t)=>s+(+t.scores[j]||0),0).toFixed(1)
+}
+function saveData(){db.collection('fantatennis').doc('shared').set({tournaments})}
+function resetData(){if(confirm('Reset?')){tournaments=[];saveData();render()}}
+function loadData(){
+  db.collection('fantatennis').doc('shared')
+    .onSnapshot(s=>{tournaments=s.data()?.tournaments||[];render()})
+}
+
+function openModal(){modal.style.display='block'}
+function closeModal(){modal.style.display='none'}
+
+document.addEventListener('DOMContentLoaded',loadData);
+</script>
+</body>
+</html>
